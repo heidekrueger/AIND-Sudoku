@@ -1,9 +1,11 @@
 assignments = []
 
+
 def cross(A, B):
     "Cross product of elements in A and elements in B."
 
     return [a + b for a in A for b in B]
+
 
 # Define globals (had to move around cross function to make this work)
 # REVIEWER: I'm quite new to python. Is there a better/more pythonic way to
@@ -21,10 +23,10 @@ square_units = [cross(rs, cs)
 diag_units = [
     [r + c for (r, c) in zip(rows, cols)],
     [r + c for (r, c) in zip(rows, cols[::-1])]
-    ]
+]
 unitlist = row_units + column_units + square_units + diag_units
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
-peers = dict((s, set(sum(units[s], []))-set([s])) for s in boxes)
+peers = dict((s, set(sum(units[s], [])) - set([s])) for s in boxes)
 
 
 def assign_value(values, box, value):
@@ -67,7 +69,7 @@ def naked_twins(values):
         for bro in boxes_l2
         for sis in boxes_l2
         if bro != sis and values[bro] == values[sis] and sis in peers[bro]
-        ]
+    ]
 
     for (bro, sis) in naked_twin_pairs:
         for common_peer in set(peers[bro]) & set(peers[sis]):
@@ -77,7 +79,7 @@ def naked_twins(values):
                 values,
                 common_peer,
                 ''.join(c for c in values[common_peer] if c not in values[bro])
-                )
+            )
 
     return values
 
@@ -121,7 +123,11 @@ def eliminate(values):
     for box in finished_boxes:
         current_value = values[box]
         for peer in peers[box]:
-            values[peer] = values[peer].replace(current_value, '')
+            values = assign_value(
+                values,
+                peer,
+                values[peer].replace(current_value, '')
+            )
 
     return values
 
@@ -132,18 +138,24 @@ def only_choice(values):
         for digit in '123456789':
             possible_boxes = [box for box in unit if digit in values[box]]
             if len(possible_boxes) == 1:
-                values[possible_boxes[0]] = digit
+                values = assign_value(
+                    values,
+                    possible_boxes[0],
+                    digit
+                )
 
     return values
 
 
 def reduce_puzzle(values):
+    # Outline taken Exercises
+
     stalled = False
     while not stalled:
         # Check how many boxes have a determined value
         solved_values_before = len(
             [box for box in values.keys() if len(values[box]) == 1]
-            )
+        )
 
         # Use the Eliminate Strategy
         values = eliminate(values)
@@ -154,7 +166,7 @@ def reduce_puzzle(values):
         # Check how many boxes have a determined value, to compare
         solved_values_after = len(
             [box for box in values.keys() if len(values[box]) == 1]
-            )
+        )
         # If no new values were added, stop the loop.
         stalled = solved_values_before == solved_values_after
         # Sanity check, return False if there is a box with zero available values:
