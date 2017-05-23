@@ -3,11 +3,23 @@
 
 # Question 1 (Naked Twins)
 Q: How do we use constraint propagation to solve the naked twins problem?  
-A: *Student should provide answer here*
+A: When looking for naked twins, we can dramatically reduce our search space with respect to all possible pairs of boxes.
+A pair of twins must
+
+* each have exactly $2$ remaining possible values (We could generalize this to higher _multiples_ like triplets, but the search space grows combinatorically)
+* be peers of one another
 
 # Question 2 (Diagonal Sudoku)
 Q: How do we use constraint propagation to solve the diagonal sudoku problem?  
-A: *Student should provide answer here*
+A: We use constraint propagation analogously to the "simple" sodoku in the exercises:
+The two diagonals are simply additional units that we need to consider in the games rules.
+
+We then solve the puzzle by first reducing it as far as possible "deterministically", i.e. by iteratively 
+applying Elimination, Only Choice and Naked twins, until the puzzle is solved or no more progress is possible with these techniques.
+In the latter case, we start "Search", which (using the search space that has ben drastically constrained by the reduction above) 
+tries to make a "guess" in a field that's so far undetermined. After making the guess, we recursively try to solve this smaller puzzle and pop out when we've either found a solution, which then also be valid for the original problem, or determine that the puzzle with the guess is impossible to solve. In the latter case, the value that has been guessed can be eliminated, and we can either continue to reduce the puzzle (new reduction steps might have been made possible by elimination) or proceed searching by making the next guess right away.
+
+Ultimately this results in either a valid solution, or the determination that the puzzle is impossible to solve, if the entire search space has been exhausted.
 
 ### Install
 
