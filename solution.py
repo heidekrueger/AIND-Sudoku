@@ -1,12 +1,13 @@
 assignments = []
 
-# Define globals (had to move around cross to make this work)
-
 def cross(A, B):
     "Cross product of elements in A and elements in B."
 
     return [a + b for a in A for b in B]
 
+# Define globals (had to move around cross function to make this work)
+# REVIEWER: I'm quite new to python. Is there a better/more pythonic way to
+# use global variables outside of __main__?
 
 rows = 'ABCDEFGHI'
 cols = '123456789'
@@ -40,17 +41,6 @@ def assign_value(values, box, value):
         assignments.append(values.copy())
     return values
 
-# TODO: Cleanup (probably not needed)
-# def remove_value(values, box, to_remove):
-#     """ Drop some possible values
-#     Args:
-#         values(dict): value dictionary
-#         box: The box where values are to be removed
-#         to_remove: String of individual vals to be removed
-#     Returns:
-#         the updated values dict
-#     """
-
 
 def naked_twins(values):
     """Eliminate values using the naked twins strategy.
@@ -68,7 +58,7 @@ def naked_twins(values):
     # Find all instances of naked twins
     boxes_l2 = [box for box in boxes if len(values[box]) == 2]
 
-    # TODO: might contain duplicates (e.g. (A,B) and (B,A) )
+    # ENHANCE: contains duplicates (e.g. (A,B) and (B,A) )
     # doesn't affect the logic but should be fixed nonetheless
     # should be able to just drop the second half of the array due to
     # lexigraphical ordering (is order guaranteed?)
@@ -79,17 +69,9 @@ def naked_twins(values):
         if bro != sis and values[bro] == values[sis] and sis in peers[bro]
         ]
 
-    if debug:
-        print(naked_twin_pairs)
-
     for (bro, sis) in naked_twin_pairs:
         for common_peer in set(peers[bro]) & set(peers[sis]):
-            # TODO: exclude finished vals (cost of check < unnecessary assignment call?)
-            if debug:
-                print('peer: '+str(common_peer))
-                print('\t ' + str(values[common_peer]))
-                print('\t ' + str(values[bro]))
-                # print('new val: ' + str(values[common_peer].translate(None, values[bro])))
+            # ENHANCE: exclude finished vals (cost of check < unnecessary assignment call?)
 
             values = assign_value(
                 values,
@@ -97,8 +79,8 @@ def naked_twins(values):
                 ''.join(c for c in values[common_peer] if c not in values[bro])
                 )
 
-    display(values)
     return values
+
 
 def grid_values(grid):
     """
@@ -163,9 +145,9 @@ def reduce_puzzle(values):
             [box for box in values.keys() if len(values[box]) == 1]
             )
 
-        # Your code here: Use the Eliminate Strategy
+        # Use the Eliminate Strategy
         values = eliminate(values)
-        # Your code here: Use the Only Choice Strategy
+        # Use the Only Choice Strategy
         values = only_choice(values)
         # Now check for naked twins
         values = naked_twins(values)
